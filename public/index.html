@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="resources/favicon.ico" type="image/x-icon" sizes="96x96" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="./reset.css" />
+    <link rel="stylesheet" href="./style.css" />
+
+    <script src="https://kit.fontawesome.com/8f95f34d7c.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js" defer></script>
+    <script src="index.js" defer type="module"></script>
+
+    <title>Bank Dashboard - HBank | devChallenges.io</title>
+  </head>
+  <body class="page">
+    <div class="app">
+      <header class="header">
+        <img class="header__logo" src="./resources/hbank-logo.svg" alt="header logo" />
+        <button class="header-dd__toggle-btn">
+          <img class="header-dd__toggle-img" src="./resources/avatar.png" alt="user avatar" />
+          <span class="header-dd__toggle-text">Ethan Sutcliffe</span>
+        </button>
+      </header>
+      <div class="sidebar">
+        <menu class="menu menu__item-select">
+          <button class="menu__item menu__dashboard-btn menu__button-style menu__button-style--active">
+            <i class="fa-solid fa-house fa-fw menu__dashboard-img"></i>
+            <span class="menu__item-text">Dashboard</span>
+          </button>
+          <div class="menu__heading">
+            <p class="menu__heading-text">Analytics</p>
+          </div>
+          <button class="menu__item menu__performance-btn menu__button-style">
+            <i class="fa-solid fa-chart-line fa-fw menu__performance-img"></i>
+            <span class="menu__item-text">Performance</span>
+          </button>
+          <div class="menu__hotjar-container">
+            <button class="menu__item menu__hotjar-btn menu__button-style">
+              <i class="fa-solid fa-bullseye fa-fw menu__hotjar-img"></i>
+              <span class="menu__item-text">Hotjar</span>
+            </button>
+            <span class="menu__hotjar-status">New</span>
+          </div>
+          <div class="menu__heading">
+            <p class="menu__heading-text">Support</p>
+          </div>
+          <div class="menu__tickets-container">
+            <button class="menu__item menu__tickets-btn menu__button-style">
+              <i class="fa-solid fa-ticket fa-fw menu-tickets-img"></i>
+              <span class="menu__item-text">Tickets</span>
+            </button>
+            <span class="menu__tickets-number">18</span>
+          </div>
+          <button class="menu__item menu__agents-btn menu__button-style">
+            <i class="fa-solid fa-user fa-fw menu__agents-img"></i>
+            <span class="menu__item-text">Agents</span>
+          </button>
+          <button class="menu__item menu__customers-btn menu__button-style">
+            <i class="fa-solid fa-users fa-fw menu__customers-img"></i>
+            <span class="menu__item-text">Customers</span>
+          </button>
+          <div class="menu__heading">
+            <p class="menu__heading-text">Shop</p>
+          </div>
+          <button class="menu__item menu__products-btn menu__button-style">
+            <i class="fa-solid fa-shop fa-fw menu__products-img"></i>
+            <span class="menu__item-text">Products</span>
+          </button>
+          <button class="menu__item menu__orders-btn menu__button-style">
+            <i class="fa-solid fa-basket-shopping fa-fw menu__orders-img"></i>
+            <span class="menu__item-text">Orders</span>
+          </button>
+          <button class="menu__item menu__reports-btn menu__button-style">
+            <i class="fa-solid fa-circle-info fa-fw menu__reports-img"></i>
+            <span class="menu__item-text">Reports</span>
+          </button>
+          <button class="menu__item menu__settings-btn menu__button-style">
+            <i class="fa-solid fa-gear fa-fw menu__settings-img"></i>
+            <span class="menu__item-text">Settings</span>
+          </button>
+          <button class="menu__item menu__logout-btn menu__button-style">
+            <i class="fa-solid fa-arrow-right-from-bracket fa-fw menu__logout-img"></i>
+            <span class="menu__item-text">Logout</span>
+          </button>
+        </menu>
+      </div>
+      <section class="main">
+        <section class="account__list-section">
+          <div class="account__list-heading">
+            <p class="account__list-text">Accounts</p>
+          </div>
+          <button class="account__link-btn">
+            <i class="fas fa-plus panel__upload-icon"></i>
+            <p class="account__link-text">Link</p>
+          </button>
+        </section>
+        <section class="totals"></section>
+      </section>
+      <section class="secondary">
+        <section class="card__details"></section>
+        <section class="spending_limits"></section>
+      </section>
+    </div>
+    <pre id="output"></pre>
+  </body>
+</html>
