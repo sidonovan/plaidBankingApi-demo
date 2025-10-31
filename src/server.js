@@ -29,7 +29,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // Serves static files (like HTML, CSS, JS, or images) from a folder named **`public`**
-app.use(express.static('public'));
+app.use(express.static('./src/public'));
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_SECRET = process.env.PLAID_SECRET;

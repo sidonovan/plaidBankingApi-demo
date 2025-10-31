@@ -15,7 +15,7 @@ It focuses on:
 ## 🧰 Tech Stack
 
 - **Backend:** Node.js, Express
-- **Frontend:** HTML, CSS, JavaScript (no framework)
+- **Frontend:** HTML, CSS, JavaScript (no framework), Typescript
 - **Environment:** Plaid Sandbox API
 
 ## ⚙️ Features
@@ -27,6 +27,7 @@ It focuses on:
 
 ## 🧩 In Progress
 
+- Adding TypeScript support for safer and more maintainable code.
 - Adding front-end UI to display accounts and transactions.
 - Improving error handling and API response visualization.
 - Exploring OAuth and redirect flows.

@@ -1,11 +1,11 @@
 import { menuItemSearchEl } from './common.js';
 
-const menuClickHandler = (event) => {
+const menuClickHandler = (event: MouseEvent) => {
   // prevent default behaviour
   event.preventDefault();
 
   // get clicked menu item element
-  const menuItemEl = event.target.closest('.menu__item');
+  const menuItemEl = (event.target as Element).closest('.menu__item');
 
   // remove the active class from previously active menu item
   // (first check to see if previously active menu item
@@ -16,7 +16,11 @@ const menuClickHandler = (event) => {
   }
 
   // add active class
-  menuItemEl.classList.add('menu__button-style--active');
+  if (menuItemEl) {
+    menuItemEl.classList.add('menu__button-style--active');
+  }
 };
 
-menuItemSearchEl.addEventListener('click', menuClickHandler);
+if (menuItemSearchEl) {
+  menuItemSearchEl.addEventListener('click', menuClickHandler);
+}
