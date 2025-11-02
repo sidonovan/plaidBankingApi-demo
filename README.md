@@ -34,8 +34,8 @@ It focuses on:
 
 ## 📜 Changelog
 
-| 2025-11-02 | 🧠 Migrated codebase to TypeScript
-| 2025-11-02 | 🔧 Enhanced error handling and Plaid API responses |
+- | 2025-11-02 | 🧠 Migrated codebase to TypeScript
+- | 2025-11-02 | 🔧 Enhanced error handling and Plaid API responses |
 
 ## 💡 What I Learned
 
