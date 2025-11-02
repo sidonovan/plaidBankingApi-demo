@@ -1,4 +1,5 @@
 import { btnLinkAccountEl } from './common.js';
+declare const Plaid: any;
 
 async function createLinkToken() {
   const resp = await fetch('/api/create_link_token', { method: 'POST' });
@@ -24,7 +25,7 @@ async function initializeLink() {
     // set up
     const handler = Plaid.create({
       token: link_token,
-      onSuccess: async (public_token, metadata) => {
+      onSuccess: async (public_token: string, metadata: any) => {
         console.log('PUBLIC TOKEN->', public_token);
         // Send public_token to server to exchange for access_token
         const resp = await fetch('/api/exchange_public_token', {
@@ -38,18 +39,29 @@ async function initializeLink() {
         console.log(JSON.stringify({ metadata, exchangeResult: data }, null, 2));
         //out({ metadata, exchangeResult: data });
       },
-      onExit: (err, metadata) => {
-        out({ err, metadata });
+      onExit: (err: Error, metadata: any) => {
+        if (err) {
+          console.error('Plaid Link error: ', err);
+        } else {
+          console.log('Plaid Link exited cleanly: ', metadata);
+        }
       },
     });
     handler.open();
-  } catch (e) {
-    out({ error: e.message });
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error('Error message: ', e.message);
+    } else {
+      console.error('Unknown error: ', e);
+    }
   }
 }
 
-const btnLinkAccount_ClickHandler = (event) => {
+const btnLinkAccount_ClickHandler = (event: MouseEvent) => {
+  event.preventDefault();
   initializeLink();
 };
 
-btnLinkAccountEl.addEventListener('click', btnLinkAccount_ClickHandler);
+if (btnLinkAccountEl) {
+  btnLinkAccountEl.addEventListener('click', btnLinkAccount_ClickHandler);
+}

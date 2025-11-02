@@ -1,143 +1,98 @@
-// Loads environment variables from a `.env` file into `process.env`
-require('dotenv').config();
-
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 console.log('Client ID:', process.env.PLAID_CLIENT_ID);
 console.log('Secret:', process.env.PLAID_SECRET);
-
-// Imports the Express library- lightweight framework that makes it easy
-// to build web servers and handle HTTP requests/responses in Node.js.
-const express = require('express');
-
-// Imports the **body-parser** middleware
-// When a client (like a React app) sends data to your server via a POST request (for example, `POST /api/plaid` with JSON data),
-// Node doesn’t automatically parse that body.
-// `body-parser` reads the incoming request body and converts it into a usable JavaScript object that you can access as `req.body`.
-
-const bodyParser = require('body-parser');
-
-// Imports specific components from the Plaid SDK
-const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
-
-// Creates an instance of an **Express application**
-const app = express();
-
-// Tells Express to automatically **parse incoming JSON request bodies**
-// When a client (like your frontend) sends a request
-// The body of that request arrives as raw bytes — not a usable JS object.
-// bodyParser.json() reads it, parses the JSON, and makes it available as req.body in your route handlers.
-
-app.use(bodyParser.json());
-
-// Serves static files (like HTML, CSS, JS, or images) from a folder named **`public`**
-app.use(express.static('./src/public'));
-
+const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
+const plaid_1 = require("plaid");
+const errorUtils_1 = require("./errorUtils");
+const app = (0, express_1.default)();
+app.use(body_parser_1.default.json());
+app.use(express_1.default.static('./public'));
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_SECRET = process.env.PLAID_SECRET;
 let PLAID_ENV;
-// if process.env.PLAID_ENV is defined, not null, or empty
-// then set PLAID_ENV = process.end.PLAID_ENV
 if (process.env.PLAID_ENV) {
-  PLAID_ENV = process.env.PLAID_ENV;
-} else {
-  PLAID_ENV = 'sandbox';
+    PLAID_ENV = process.env.PLAID_ENV;
 }
-
-// Creates a new **configuration object** for the Plaid SDK.
-const config = new Configuration({
-  // sets up sandbox/dev/prod environment/url - returns 'https://sandbox.plaid.com'
-  basePath: PlaidEnvironments[PLAID_ENV.toLowerCase()],
-  baseOptions: {
-    headers: {
-      'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
-      'PLAID-SECRET': PLAID_SECRET,
+else {
+    PLAID_ENV = 'sandbox';
+}
+const config = new plaid_1.Configuration({
+    basePath: plaid_1.PlaidEnvironments[PLAID_ENV.toLowerCase()],
+    baseOptions: {
+        headers: {
+            'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
+            'PLAID-SECRET': PLAID_SECRET,
+        },
     },
-  },
 });
-
-// Creates a **new Plaid client instance** using the configuration you just set up.
-// `client` now has all the Plaid API methods available - client.linkTokenCreate(), client.transactionsGet() etc
-
-const client = new PlaidApi(config);
-
-// In-memory store for demo only - in a real app, you’d store these securely in a database, not in memory.
-
-// Plaid uses an **access token** to identify a specific user’s bank connection (called an **Item**).
-//  - You get this token after exchanging a **public token** via `client.itemPublicTokenExchange()`.
-//  - You store it so you can make authenticated requests to Plaid later (like fetching transactions).
-// Here, it’s stored **in memory**, which means it disappears when the server restarts.
+const client = new plaid_1.PlaidApi(config);
 let ACCESS_TOKEN = null;
-
-// Plaid gives every connected bank account (Item) a unique ID.
-// Storing the ITEM_ID allows your server to reference this Item later (for logging, updates, or fetching account data).
 let ITEM_ID = null;
-
-// 1) Create a POST endpoint at `/api/create_link_token`.
-// When the browser (client) calls this route, the server will request a **link token** from Plaid.
-// `req` = the incoming request object from the client.
-// `res` = the response object you use to send data back to the client.
-
-app.post('/api/create_link_token', async (req, res) => {
-  try {
-    // Creates the **request object** for Plaid’s `linkTokenCreate` API.
-    const request = {
-      user: { client_user_id: 'user-id-123' },
-      client_name: 'Quickstart App',
-      products: ['transactions'],
-      country_codes: ['US'],
-      language: 'en',
-    };
-    // await pauses execution of this async function (not the app) until the Promise returns
-    // if the Promise fulfills (resolved), the resolved value is stored in resp
-    // If the Promise rejects, control jumps to the catch block
-    console.log('To plaid', request);
-    const resp = await client.linkTokenCreate(request);
-    // Once await finishes and we have the response, we send the JSON (link token) back to the client.
-    // This line only runs after the Promise resolves
-    res.json(resp.data);
-  } catch (err) {
-    // If the linkTokenCreate Promise rejects (e.g., network error, API failure), await throws the error
-    // The catch block catches it, logs it, and sends a 500 response back to the client
-    console.error(err);
-    // Set status to 500 (Internal Server Error)
-    res.status(500);
-
-    // Figure out what error message to send
-    let errorMessage;
-
-    // If the error came from an API (like Plaid), use its response data
-    // If err.response exists and it has a data property
-    if (err.response && err.response.data) {
-      errorMessage = err.response.data;
-    } else {
-      // Otherwise, use the generic error message
-      errorMessage = err.message;
+app.post('/api/create_link_token', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('client request: ', _req.body);
+    try {
+        const request = {
+            user: { client_user_id: 'user-id-123' },
+            client_name: 'Quickstart App',
+            products: [plaid_1.Products.Transactions],
+            country_codes: [plaid_1.CountryCode.Us],
+            language: 'en',
+        };
+        console.log('To plaid', request);
+        const resp = yield client.linkTokenCreate(request);
+        res.json(resp.data);
     }
-
-    // Send the JSON response back to client
-    res.json({ error: errorMessage });
-  }
-});
-
-// 2) Exchange public_token (sent from client after successful Link)
-app.post('/api/exchange_public_token', async (req, res) => {
-  const { public_token } = req.body;
-  try {
-    const exchangeResp = await client.itemPublicTokenExchange({ public_token });
-    ACCESS_TOKEN = exchangeResp.data.access_token;
-    ITEM_ID = exchangeResp.data.item_id;
-    res.json({ access_token: ACCESS_TOKEN, item_id: ITEM_ID });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.response?.data || err.message });
-  }
-});
-
-// checks if an environment variable named `PORT` exists - if `process.env.PORT` is not defined use `8000`
+    catch (err) {
+        const e = (0, errorUtils_1.toPlaidError)(err);
+        console.error(e);
+        res.status(500);
+        let errorMessage;
+        if (e.response && e.response.data) {
+            errorMessage = e.response.data;
+        }
+        else {
+            errorMessage = e.message;
+        }
+        res.json({ error: errorMessage });
+    }
+}));
+app.post('/api/exchange_public_token', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const { public_token } = req.body;
+    try {
+        const exchangeResp = yield client.itemPublicTokenExchange({ public_token });
+        ACCESS_TOKEN = exchangeResp.data.access_token;
+        ITEM_ID = exchangeResp.data.item_id;
+        res.json({ access_token: ACCESS_TOKEN, item_id: ITEM_ID });
+    }
+    catch (err) {
+        const e = (0, errorUtils_1.toPlaidError)(err);
+        console.error(e);
+        res.status(500).json({ error: ((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message });
+    }
+}));
 let PORT;
 if (process.env.PORT) {
-  PORT = process.env.PORT;
-} else {
-  PORT = 8000;
+    PORT = process.env.PORT;
 }
-// tells Express to start listening for HTTP requests on that port.
+else {
+    PORT = 8000;
+}
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+//# sourceMappingURL=server.js.map

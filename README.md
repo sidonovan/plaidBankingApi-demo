@@ -15,7 +15,7 @@ It focuses on:
 ## 🧰 Tech Stack
 
 - **Backend:** Node.js, Express
-- **Frontend:** HTML, CSS, JavaScript (no framework), Typescript
+- **Frontend:** HTML, CSS, TypeScript (no framework)
 - **Environment:** Plaid Sandbox API
 
 ## ⚙️ Features
@@ -24,13 +24,18 @@ It focuses on:
 - Launch the Plaid Link flow for sandbox institutions.
 - Retrieve linked account metadata and transaction data.
 - Log structured JSON responses for analysis and debugging.
+- Full TypeScript across the codebase.
 
 ## 🧩 In Progress
 
-- Adding TypeScript support for safer and more maintainable code.
 - Adding front-end UI to display accounts and transactions.
 - Improving error handling and API response visualization.
 - Exploring OAuth and redirect flows.
+
+## 📜 Changelog
+
+| 2025-11-02 | 🧠 Migrated codebase to TypeScript
+| 2025-11-02 | 🔧 Enhanced error handling and Plaid API responses |
 
 ## 💡 What I Learned
 
@@ -46,9 +51,4 @@ PLAID_CLIENT_ID=your_id
 PLAID_SECRET=your_secret
 PLAID_ENV=sandbox
 
-```bash
-npm install
-node server.js
-```
-
-Then visit http://localhost:8000.
+TBC...
