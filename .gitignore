@@ -30,5 +30,5 @@ dist/
 design/
 *.fig
 *.xd
-README_template.md
+./README_template.md
 

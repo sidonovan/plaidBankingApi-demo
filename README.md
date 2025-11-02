@@ -24,7 +24,7 @@ It focuses on:
 - Launch the Plaid Link flow for sandbox institutions.
 - Retrieve linked account metadata and transaction data.
 - Log structured JSON responses for analysis and debugging.
-- Full TypeScript across the codebase.
+- Full TypeScript support across the codebase.
 
 ## 🧩 In Progress
 
